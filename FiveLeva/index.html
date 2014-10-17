@@ -5,13 +5,17 @@
     <meta charset="utf-8" />
     <link href="kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
     <link href="styles/main.css" rel="stylesheet" />
-
+    
     <script src="cordova.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
     <script src="kendo/js/kendo.mobile.min.js"></script>
 
-    <script src="scripts/app.js"></script>
-
+    <!--script src="scripts/app.js"></script-->
+    <script src="scripts/Comm.js"></script>
+	<script src="scripts/Business.js"></script>
+        <script src="scripts/Report.js"></script>
+	<script src="scripts/Storage.js"></script>
+    <script src="scripts/Log.js"></script>
 </head>
 <body>
  
@@ -26,7 +30,9 @@
     <!-- application views will be rendered here -->
     
   </div>
-
+<div data-role="view">
+    app
+    </div>
   <!-- application drawer and contents -->
   <div data-role="drawer" id="appDrawer" style="width: 270px" data-title="Navigation">
     <div data-role="header">
@@ -46,6 +52,60 @@
       </li>
     </ul>
   </div>       
-
+<script>
+    window.app = new kendo.mobile.Application($(document.body), {
+        	platform: "ios7",
+        layout : "home"});
+         document.addEventListener("deviceready", function(){
+             	Comm.init({
+                    url: "http://localhost:8080/fiveleva/",
+                    dataCallback: function(){
+                        return {password: Business._password, appVersion: 1};
+                	},
+                    onCommError: function(error){
+                        Business.showAlert(error);
+                    },
+                    hideLoading: function(){
+                        Business.hideLoading();
+                    },
+                    onError: function(error){
+                        Log.i("Server responded with error "+error);
+                    	Business.showAlert(error);
+                	}, 
+                    checkIfRegistered: Business._checkIfRegistered
+                    //type: "requestBody"
+                });
+                Storage.init({complete: function(){Business.login();}});
+             /* Beacon.init({onInit: function(){},
+                error: function(err){}, onFound: function(storeNumber){
+                    UI.showAlert("Found store number "+storeNumber);
+            }});
+                Push.init({
+                    onToken: function(token){
+                        Log.i("On token" +token);
+                        //Business._sendPushToken();
+                        Log.i("Login is complete and token is sent");
+                    },
+                    onBackground: function(message, data) {
+                        Business.openViewOnNotification(data);
+                        for (key in data) {
+                            Log.i(key + ": " + data[key]);
+                        }
+                        Log.i("Got message from background " + message);
+                    },
+                    onForeground: function(message, data) {
+                        Business.openViewOnNotification(data);
+                        for (key in data) {
+                            Log.i(key + ": " + data[key]);
+                        }
+                        Log.i("Got message from foreground " + message);
+                    },
+                    onError: function(message) {
+                        Log.i("Got PUSH error " + message);
+                    }
+                });*/
+            },false);
+                
+</script>
 </body>
 </html>
