@@ -14,13 +14,16 @@
         <script src="scripts/Comm.js"></script>
         <script src="scripts/Business.js"></script>
         <script src="scripts/Model.js"></script>
+        <script src="scripts/Maps.js"></script>
         <script src="scripts/Report.js"></script>
         <script src="scripts/Storage.js"></script>
         <script src="scripts/Log.js"></script>
         <script src="scripts/Beacon.js"></script>
         <script src="scripts/Push.js"></script>
+
          <script src="scripts/Cam.js"></script>
          <script src="scripts/resize.js"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYg56ksJ0NoiGk4Cc-FKS63j3X-OjY9_0&sensor=true&language=en"></script>
         <style>
             .new-price
             {
@@ -63,7 +66,7 @@
             {
                 text-align: center;
             }
-            #user-discount-image
+            .discount-image
             {
                 width: 100%;
                 height: 200px;
@@ -71,7 +74,7 @@
                 background-repeat: no-repeat;
                 background-position: center
             }
-            #user-discount-name
+            .discount-name
             {
                 position: absolute;
                 top: 160px;
@@ -79,6 +82,22 @@
                 margin-left: .7rem;
                 color: white;
                 text-shadow: 0 0px 4px #444;
+            }
+            .km-new:before,
+            .km-new:after
+            {
+                content: "\"
+            }
+            .km-ok:after,
+            .km-ok:before
+            {
+                content: "\e030";
+            }
+
+            .km-cancel:after,
+            .km-cancel:before
+            {
+                content: "\e031";
             }
         </style>
     </head>
@@ -89,7 +108,7 @@
                 <div data-role="navbar">
                     <span data-role="view-title"></span>
                     <a data-role="button" href="#appDrawer" data-rel="drawer" data-align="left" data-icon="drawer-button"></a>
-                    <a data-role="button" href="#editDiscount" data-align="right" data-icon="new"></a>
+                    <a data-role="button" href="#editDiscount" data-align="right" data-icon="add"></a>
                 </div>
             </div>
         </div>
@@ -98,33 +117,48 @@
             <ul id="discounts-list" data-role="listview" data-template="template"></ul>
         </div>
         <div data-role="layout" data-id="form-layout">
-		<div data-role="header">
-			<div data-role="navbar">
-					<a class="nav-button"
-                        data-align="left"
-						data-icon="cancel"
-                        data-role="button"
-                        data-click="Model.cancelform"
-                        style="font-size: 1.5em; padding-top: .3em"></a>
-					<span data-role="view-title">5 leva</span>
-					<a class="nav-button"
-                        data-align="right"
-                        data-role="button"
-                        data-icon="ok"
-                        data-click="Model.submitform"
-                        data-transition="overlay:up"
-                        style="font-size: 1.5em; padding-top: .3em"></a>
+            <div data-role="header">
+                <div data-role="navbar">
+                    <a class="nav-button"
+                       data-align="left"
+                       data-icon="cancel"
+                       data-role="button"
+                       data-click="Model.cancelform"
+                       style="font-size: 1.5em; padding-top: .3em"></a>
+                    <span data-role="view-title">5 leva</span>
+                    <a class="nav-button"
+                       data-align="right"
+                       data-role="button"
+                       data-icon="ok"
+                       data-click="Model.submitform"
+                       data-transition="overlay:up"
+                       style="font-size: 1.5em; padding-top: .3em"></a>
+                </div>
             </div>
+
 		</div>
-	</div>
-    <div id="editDiscount" data-role="view" data-layout="form-layout" data-model="Model.form" data-show="Business.editDiscount">
-       <ul id="add-venue-name" data-role="listview">
-           <img id="dImg" src="styles/images/1px.png" onclick="Business._openCamera()"/>
-         <li><label>Name<input class="right-align" type="text" data-bind="value: object.name"/></label></li>
-            <li><label>Old Price<input class="right-align" type="text" data-bind="value: object.oldPrice"/></label></li>
-           </ul>
-        
-    </div>
+
+
+        <div id="editDiscount" data-role="view" data-layout="form-layout" data-model="Model.form" data-show="Business.editDiscount">
+            <ul id="add-venue-name" data-role="listview">
+                  <img id="dImg" src="styles/images/1px.png" onclick="Business._openCamera()"/>
+         
+                <li>
+                    <label>
+                        Name
+                        <input class="right-align" type="text" data-bind="value: object.name"/>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        Old Price
+                        <input class="right-align" type="text" data-bind="value: object.oldPrice"/>
+                    </label>
+                </li>
+            </ul>
+
+        </div>
+
         <script id="template" type="text/x-kendo-template">
             #var d;#
             #if (type) {#

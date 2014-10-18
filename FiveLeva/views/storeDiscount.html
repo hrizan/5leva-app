@@ -2,17 +2,17 @@
     data-role="view"
     data-layout="back"
     data-title="Promo"
-    data-model="Model"
+    data-model="Model.storeDiscount"
     data-init="Business.showStoreDiscount">
     
-    <div id="store-discount-image"></div>
-    <div style="display: inline-block; border: 1px solid black">
-        <ul style="list-style-type: none">
-            <li><span class="new-price" data-bind="text: storeDiscount.newPrice"></span></li>
-            <li>RRP: <span class="old-price" data-bind="text: storeDiscount.oldPrice"></span></li>
-        </ul>
+    <div id="store-discount-image" class="discount-image"></div>
+    <div  class="discount-name">
+        <span data-bind="text: s.name"></span>&nbsp;in&nbsp;<span data-bind="text: s.storeName"></span>
     </div>
-    <div style="display: inline-block; float: right; margin-right: 1em; border: 1px solid black">
-        <span data-bind="text: storeDiscount.storeName" style="font-size: 3em"></span>
+    <div style="display: inline-block;">
+        <ul style="list-style-type: none">
+            <li><span class="new-price" data-bind="text: s.newPrice"></span></li>
+            <li>RRP: <span class="old-price" data-bind="text: s.oldPrice"></span></li>
+        </ul>
     </div>
 </div>

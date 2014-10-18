@@ -98,6 +98,8 @@ var Business = {
             },
             success: function(result){
                 console.log(result);
+                $("#store-discount-image").css("background-image", "url('" +result.url+ "')");
+                Model.setStoreDiscount(result);
             },
             error: function(){
                 alert("ERROR!");
@@ -106,6 +108,7 @@ var Business = {
     },
     showUserDiscount: function(evt) {
         var id = evt.view.params.id;
+        Map.udMiniMapInit();
         Comm.post({
             uri: "showUserDiscountMobile",
             data: {
@@ -115,11 +118,18 @@ var Business = {
                 console.log(result);
                 $("#user-discount-image").css("background-image", "url('" +result.url+ "')");
                 Model.setUserDiscount(result);
+                Map.dropPinAtMiniMap(42.6954328, 23.3239465)
             },
             error: function(){
                 alert("ERROR!");
             }
         });
+    },
+    seeWhereIsDiscount: function(){
+        app.navigate("#user-discount-big-map");
+    },
+    userDiscountBigMap: function(){
+        Map.udBigMapInit(42.7, 23.4);
     }, editDiscount:function(evt){
         var id =evt.view.params.id;
         Log.i("Edit discount");
@@ -145,6 +155,7 @@ var Business = {
             photo: Cam.img,
             discountId: id
         });
+
     }, _openCamera:function(){
            Cam.getPhoto({
             success: function(image){
@@ -153,4 +164,6 @@ var Business = {
             img: "dImg"
         });
      }
+};
+    }
 };
