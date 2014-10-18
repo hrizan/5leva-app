@@ -129,7 +129,7 @@ var Business = {
                    app.navigate("views/userDiscount.html?id=" + result.id);
                 }
                 Comm.post({
-                    uri: id?"addDiscountApp":"editDiscountApp",
+                    uri: !id?"addDiscountApp":"editDiscountApp",
                     data: Model.form.object,
                     success: success
                 });
@@ -139,10 +139,18 @@ var Business = {
             },
             name: "",
             storeName:"",
-            oldPrice:"",
-            newPrice:"",
-            photo: "",
+            oldPrice:2,
+            newPrice:1,
+            expirationDate: "2014/11/11",
+            photo: Cam.img,
             discountId: id
         });
-    }
+    }, _openCamera:function(){
+           Cam.getPhoto({
+            success: function(image){
+                  Model.form.object.photo = Cam.img; 
+            },
+            img: "dImg"
+        });
+     }
 };

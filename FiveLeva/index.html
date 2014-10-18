@@ -19,6 +19,8 @@
         <script src="scripts/Log.js"></script>
         <script src="scripts/Beacon.js"></script>
         <script src="scripts/Push.js"></script>
+         <script src="scripts/Cam.js"></script>
+         <script src="scripts/resize.js"></script>
         <style>
             .new-price
             {
@@ -117,6 +119,7 @@
 	</div>
     <div id="editDiscount" data-role="view" data-layout="form-layout" data-model="Model.form" data-show="Business.editDiscount">
        <ul id="add-venue-name" data-role="listview">
+           <img id="dImg" src="styles/images/1px.png" onclick="Business._openCamera()"/>
          <li><label>Name<input class="right-align" type="text" data-bind="value: object.name"/></label></li>
             <li><label>Old Price<input class="right-align" type="text" data-bind="value: object.oldPrice"/></label></li>
            </ul>
@@ -168,7 +171,8 @@
             </ul>
         </div>
         <script>
-            var url = "http://192.168.196.62:8080/fiveleva/";
+           // var url = "http://192.168.196.62:8080/fiveleva/";
+             var url = "http://192.168.1.102:8080/fiveleva/";
             window.app = new kendo.mobile.Application($(document.body), {
                                                           platform: "ios7",
                                                           layout : "home"
