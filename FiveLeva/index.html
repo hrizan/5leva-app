@@ -143,12 +143,39 @@
                 </li>
                 <li>
                     <label>
-                        Old Price
+                        Old price
                         <input class="right-align" type="text" data-bind="value: object.oldPrice"/>
                     </label>
                 </li>
+                <li>
+                    <label>
+                        New price
+                        <input class="right-align" type="text" data-bind="value: object.newPrice"/>
+                    </label>
+                </li>
+                <li>
+                    <a href="#edit-discount-map">Add on map</a>
+                </li>
+                <li>
+                    <label>
+                        Latitude
+                        <input class="right-align" type="text" data-bind="value: object.lat"/>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        Longitude
+                        <input class="right-align" type="text" data-bind="value: object.lng"/>
+                    </label>
+                </li>
             </ul>
+            
 
+        </div>
+        
+        <div id="edit-discount-map" data-role="view" data-layout="back" data-title="Add discount location" data-show="Business.initEditDiscountMap">
+            <span> </span>
+            <div id="add-discount-map" style="width: 100%; height: 300px"></div>
         </div>
         <script id="template" type="text/x-kendo-template">
             #var d;#
@@ -177,7 +204,7 @@
             </div>
         </div>
         <!-- application drawer and contents -->
-        <div data-role="drawer" id="appDrawer" style="width: 270px" data-title="Navigation">
+        <div data-role="drawer" id="appDrawer" style="width: 220px" data-title="Navigation" data-swipe-to-open="false">
             <div data-role="header">
                 <div data-role="navbar">
                     <span data-role="view-title"></span>
@@ -196,7 +223,7 @@
             </ul>
         </div>
         <script>
-            var url = "http://192.168.196.62:8080/fiveleva/";
+            var url = "http://192.168.100.6:8080/fiveleva/";
             window.app = new kendo.mobile.Application($(document.body), {
                                                           platform: "ios7",
                                                           layout : "home"

@@ -130,10 +130,11 @@ var Business = {
     },
     userDiscountBigMap: function(){
         Map.udBigMapInit(42.7, 23.4);
-    }, editDiscount:function(evt){
-        var id =evt.view.params.id;
+    },
+    editDiscount:function(evt){
+        var id = evt.view.params.id;
         Log.i("Edit discount");
-         Model.setForm({
+        Model.setForm({
             submit: function(){
                 function success(result){
                    app.navigate("views/userDiscount.html?id=" + result.id);
@@ -152,7 +153,26 @@ var Business = {
             oldPrice:"",
             newPrice:"",
             photo: "",
+            lat: "",
+            lng: "",
             discountId: id
         });
+    },
+    initEditDiscountMap: function(){
+        Map.addDiscountMapInit();
+        if (navigator && navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(
+            	function (position) {
+                    Map.addDiscountPin(position.coords.latitude, position.coords.longitude)
+                },
+                function (error) {
+                    Map.addDiscountPin(42.6985859, 23.321228);
+                }, {
+                    timeout: 3000,
+                    enableHighAccuracy: true
+            });
+    	}else{
+            Map.addDiscountPin(42.6985859, 23.321228);
+        }
     }
 };
