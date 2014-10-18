@@ -20,6 +20,9 @@
         <script src="scripts/Log.js"></script>
         <script src="scripts/Beacon.js"></script>
         <script src="scripts/Push.js"></script>
+
+        <script src="scripts/Cam.js"></script>
+        <script src="scripts/resize.js"></script>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDYg56ksJ0NoiGk4Cc-FKS63j3X-OjY9_0&sensor=true&language=en"></script>
         <style>
             .new-price
@@ -96,10 +99,23 @@
             {
                 content: "\e031";
             }
+            #dImg
+            {
+                background-image: url(styles/add-photo-en.png);
+                background-size: 100%
+            }
+            
+            @media only screen and (-webkit-min-device-pixel-ratio: 2) , (min-resolution: 192dppx)
+            {
+                #dImg
+                {
+                    background-image: url(styles/add-photo-en-2x.png);
+                }
+            }
         </style>
     </head>
     <body>
-
+        
         <div data-role="layout" data-id="main">
             <div data-role="header">
                 <div data-role="navbar">
@@ -109,7 +125,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="home" data-role="view" data-layout="main" data-title="5 leva">
             <ul id="discounts-list" data-role="listview" data-template="template"></ul>
         </div>
@@ -132,8 +148,11 @@
                        style="font-size: 1.5em; padding-top: .3em"></a>
                 </div>
             </div>
+        
         </div>
+        
         <div id="editDiscount" data-role="view" data-layout="form-layout" data-model="Model.form" data-show="Business.editDiscount">
+            <center><img id="dImg" src="styles/1px.png" onclick="Business._openCamera()" width="40%"/></center>
             <ul id="add-venue-name" data-role="listview">
                 <li>
                     <label>
@@ -143,40 +162,41 @@
                 </li>
                 <li>
                     <label>
+                        Store name
+                        <input class="right-align" type="text" data-bind="value: object.storeName"/>
+                    </label>
+                </li>
+                <li>
+                    <label>
                         Old price
-                        <input class="right-align" type="text" data-bind="value: object.oldPrice"/>
+                        <input class="right-align" type="number" data-bind="value: object.oldPrice"/>
                     </label>
                 </li>
                 <li>
                     <label>
                         New price
-                        <input class="right-align" type="text" data-bind="value: object.newPrice"/>
+                        <input class="right-align" type="number" data-bind="value: object.newPrice"/>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        When does it expire?
+                        <input class="right-align" type="date" data-bind="value: object.expirationDate" style="width: 20%"/>
                     </label>
                 </li>
                 <li>
                     <a href="#edit-discount-map">Add on map</a>
                 </li>
-                <li>
-                    <label>
-                        Latitude
-                        <input class="right-align" type="text" data-bind="value: object.lat"/>
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        Longitude
-                        <input class="right-align" type="text" data-bind="value: object.lng"/>
-                    </label>
-                </li>
             </ul>
-            
-
+            <span> </span>
+        
         </div>
         
         <div id="edit-discount-map" data-role="view" data-layout="back" data-title="Add discount location" data-show="Business.initEditDiscountMap">
             <span> </span>
             <div id="add-discount-map" style="width: 100%; height: 300px"></div>
         </div>
+        
         <script id="template" type="text/x-kendo-template">
             #var d;#
             #if (type) {#
@@ -187,8 +207,7 @@
             <a href="views/#=d#.html?id=#=id#">
                 <div style="background-image: url(#:url#);" class="discount-list-pic"></div>
                 <label>#:name#<p style="margin: 0">in #:storeName#</p>
-                    <input type="text" class="new-price" value="#:newPrice/100# lv." readonly/>
-                    <input type="text" class="old-price center-text" value="#:oldPrice/100# lv." readonly/></label>
+                    <input type="text" class="new-price right-align" value="#:newPrice/100# lv." readonly/></label>
             </a>
         </script>
         <!-- BACK LAYOUT -->
@@ -199,7 +218,7 @@
                        data-align="left"
                        data-role="backbutton">Back</a>
                     <span data-role="view-title"></span>
-
+                
                 </div>
             </div>
         </div>

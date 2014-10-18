@@ -134,27 +134,42 @@ var Business = {
     editDiscount:function(evt){
         var id = evt.view.params.id;
         Log.i("Edit discount");
+        var lat, lng, name, storeName, oldPrice, newPrice, expirationDate = "";
+        if (Model.form.object.lat != "" || Model.form.object.lng != ""){
+            lat = Model.form.object.lat;
+            lng = Model.form.object.lng
+        }
+        if (Model.form.object.name != "") name = Model.form.object.name;
+        if (Model.form.object.storeName != "") storeName = Model.form.object.storeName;
+        if (Model.form.object.oldPrice != "") oldPrice = Model.form.object.oldPrice;
+        if (Model.form.object.newPrice != "") newPrice = Model.form.object.newPrice;
+        if (Model.form.object.expirationDate != "") expirationDate = Model.form.object.expirationDate;
         Model.setForm({
             submit: function(){
                 function success(result){
                    app.navigate("views/userDiscount.html?id=" + result.id);
                 }
+                Model.form.object.oldPrice = Math.ceil(Model.form.object.oldPrice*100);
+                Model.form.object.newPrice = Math.ceil(Model.form.object.newPrice*100);
+                console.log(Model.form.object);
                 Comm.post({
-                    uri: id?"addDiscountApp":"editDiscountApp",
+                    uri: !id?"addDiscountApp":"editDiscountApp",
                     data: Model.form.object,
                     success: success
                 });
             },
             cancel: function(){
+                $("#dImg").attr("src", "styles/1px.png");
                 app.navigate("#home");
             },
-            name: "",
-            storeName:"",
-            oldPrice:"",
-            newPrice:"",
-            photo: "",
-            lat: "",
-            lng: "",
+            name: name,
+            storeName: storeName,
+            oldPrice: oldPrice,
+            newPrice: newPrice,
+            lat: lat,
+            lng: lng,
+            expirationDate: expirationDate,
+            photo: Cam.img,
             discountId: id
         });
     },
@@ -174,5 +189,13 @@ var Business = {
     	}else{
             Map.addDiscountPin(42.6985859, 23.321228);
         }
-    }
+
+    }, _openCamera:function(){
+           Cam.getPhoto({
+            success: function(image){
+                  Model.form.object.photo = Cam.img; 
+            },
+            img: "dImg"
+        });
+     }
 };
