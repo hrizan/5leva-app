@@ -1,0 +1,27 @@
+<div id="userDiscount"
+    data-role="view"
+    data-layout="back"
+    data-title="Promo"
+    data-model="Model"
+    data-show="Business.showUserDiscount">
+    
+    <div id="user-discount-image"></div>
+    <div id="user-discount-name">
+        <span data-bind="text: userDiscount.name"></span>&nbsp;in&nbsp;<span data-bind="text: userDiscount.storeName"></span>
+    </div>
+    <div style="display: inline-block;">
+        <ul style="list-style-type: none; padding-left: 14px;">
+            <li><span class="new-price" data-bind="text: userDiscount.newPrice"></span></li>
+            <li><span style="font-size: .8em">RRP: </span><span class="old-price" data-bind="text: userDiscount.oldPrice"></span></li>
+        </ul>
+    </div>
+    <div style="display: inline-block; float: right;">
+        
+    </div>
+    <hr>
+    <div class="center-text">
+        <a data-role="button" data-click="Business.requestPromotion">I'm gonna buy this!</a>
+        <br>
+        <a data-role="button" data-click="Business.editPromotion">Edit</a>
+    </div>
+</div>

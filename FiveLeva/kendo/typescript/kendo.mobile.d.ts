@@ -307,9 +307,13 @@ declare module kendo {
         model: Object;
     }
 
+    class ViewContainer extends Observable {
+       view: View;
+    }
+
     class Layout extends View {
         showIn(selector: string, view: View): void;
-        regions: { [selector: string]: View; };
+        containers: { [selector: string]: ViewContainer; };
     }
 
     class History extends Observable {
@@ -479,6 +483,12 @@ declare module kendo.data {
         destroy(): void;
     }
 
+    class BindingTarget {
+        target: any;
+        options: any;
+        source: any;
+    }
+
     class EventBinding extends Binding {
         get (): void;
     }
@@ -541,9 +551,23 @@ declare module kendo.data {
         static define(options: DataSourceSchemaModelWithFieldsArray): typeof Model;
     }
 
+    interface SchedulerEventData {
+        description?: string;
+        end?: Date;
+        endTimezone?: string;
+        isAllDay?: boolean;
+        id?: any;
+        start?: Date;
+        startTimezone?: string;
+        recurrenceId?: any;
+        recurrenceRule?: string;
+        recurrenceException?: string;
+        title?: string;
+    }
+
     class SchedulerEvent extends Model {
-        constructor(data?: any);
-        init(data?: any): void;
+        constructor(data?: SchedulerEventData);
+        init(data?: SchedulerEventData): void;
 
         description: string;
         end: Date;
@@ -555,10 +579,54 @@ declare module kendo.data {
         recurrenceId: any;
         recurrenceRule: string;
         recurrenceException: string;
+        title: string;
         static idField: string;
         static fields: DataSourceSchemaModelFields;
         static define(options: DataSourceSchemaModelWithFieldsObject): typeof SchedulerEvent;
         static define(options: DataSourceSchemaModelWithFieldsArray): typeof SchedulerEvent;
+        clone(options: any, updateUid: boolean): SchedulerEvent;
+        duration(): number;
+        expand(start: Date, end: Date, zone: any): SchedulerEvent[];
+        update(eventInfo: SchedulerEventData): void;
+        isMultiDay(): boolean;
+        isException(): boolean;
+        isOccurrence(): boolean;
+        isRecurring(): boolean;
+        isRecurrenceHead(): boolean;
+        toOccurrence(options: any): SchedulerEvent;
+    }
+
+    class GanttTask extends Model {
+        constructor(data?: any);
+        init(data?: any): void;
+
+        id: any;
+		parentId: number;
+		orderId: number;
+		title: string;
+		start: Date;
+		end: Date;
+		percentComplete: number;
+		summary: boolean;
+		expanded: boolean;
+        static idField: string;
+        static fields: DataSourceSchemaModelFields;
+        static define(options: DataSourceSchemaModelWithFieldsObject): typeof GanttTask;
+        static define(options: DataSourceSchemaModelWithFieldsArray): typeof GanttTask;
+    }
+
+    class GanttDependency extends Model {
+        constructor(data?: any);
+        init(data?: any): void;
+
+        id: any;
+		predecessorId: number;
+		successorId: number;
+		type: number;
+        static idField: string;
+        static fields: DataSourceSchemaModelFields;
+        static define(options: DataSourceSchemaModelWithFieldsObject): typeof GanttDependency;
+        static define(options: DataSourceSchemaModelWithFieldsArray): typeof GanttDependency;
     }
 
     class Node extends Model {
@@ -585,6 +653,32 @@ declare module kendo.data {
         remove(model: kendo.data.SchedulerEvent): void;
     }
 
+    class GanttDataSource extends DataSource {
+        add(model: Object): kendo.data.GanttTask;
+        add(model: kendo.data.GanttTask): kendo.data.GanttTask;
+        at(index: number): kendo.data.GanttTask;
+        cancelChanges(model?: kendo.data.GanttTask): void;
+        get(id: any): kendo.data.GanttTask;
+        getByUid(uid: string): kendo.data.GanttTask;
+        indexOf(value: kendo.data.GanttTask): number;
+        insert(index: number, model: Object): kendo.data.GanttTask;
+        insert(index: number, model: kendo.data.GanttTask): kendo.data.GanttTask;
+        remove(model: kendo.data.GanttTask): void;
+    }
+
+    class GanttDependencyDataSource extends DataSource {
+        add(model: Object): kendo.data.GanttDependency;
+        add(model: kendo.data.GanttDependency): kendo.data.GanttDependency;
+        at(index: number): kendo.data.GanttDependency;
+        cancelChanges(model?: kendo.data.GanttDependency): void;
+        get(id: any): kendo.data.GanttDependency;
+        getByUid(uid: string): kendo.data.GanttDependency;
+        indexOf(value: kendo.data.GanttDependency): number;
+        insert(index: number, model: Object): kendo.data.GanttDependency;
+        insert(index: number, model: kendo.data.GanttDependency): kendo.data.GanttDependency;
+        remove(model: kendo.data.GanttDependency): void;
+    }
+
     class HierarchicalDataSource extends DataSource {
         constructor(options?: HierarchicalDataSourceOptions);
         init(options?: HierarchicalDataSourceOptions): void;
@@ -602,6 +696,121 @@ declare module kendo.data {
     interface HierarchicalDataSourceSchemaModel extends DataSourceSchemaModel {
         hasChildren?: any;
         children?: any;
+    }
+
+    interface PivotDiscoverRequestRestrictionOptions {
+        catalogName: string;
+        cubeName: string;
+    }
+
+    interface PivotDiscoverRequestDataOptions {
+        command: string;
+        restrictions: PivotDiscoverRequestRestrictionOptions;
+    }
+
+    interface PivotDiscoverRequestOptions {
+        data: PivotDiscoverRequestDataOptions;
+    }
+
+    interface PivotTransportConnection {
+        catalog?: string;
+        cube?: string;
+    }
+
+    interface PivotTransportDiscover {
+        cache?: boolean;
+        contentType?: string;
+        data?: any;
+        dataType?: string;
+        type?: string;
+        url?: any;
+    }
+
+    interface PivotTransport {
+        discover?: any;
+        read?: any;
+    }
+
+    interface PivotTransportWithObjectOperations extends PivotTransport {
+        connection: PivotTransportConnection;
+        discover?: PivotTransportDiscover;
+        read?: DataSourceTransportRead;
+    }
+
+    interface PivotTransportWithFunctionOperations extends PivotTransport {
+        discover?: (options: DataSourceTransportOptions) => void;
+        read?: (options: DataSourceTransportOptions) => void;
+    }
+
+    interface PivotDataSourceAxisOptions {
+        name: string;
+        expand?: boolean;
+    }
+
+    interface PivotDataSourceMeasureOptions {
+        values: string[];
+        axis?: string;
+    }
+
+    interface PivotDataSourceOptions extends DataSourceOptions {
+        columns?: PivotDataSourceAxisOptions[];
+        measures?: PivotDataSourceMeasureOptions[];
+        rows?: PivotDataSourceAxisOptions[];
+        transport?: PivotTransport;
+        schema?: PivotSchema;
+    }
+
+    interface PivotTupleModel {
+        children: PivotTupleModel[];
+        caption?: string;
+        name: string;
+        levelName?: string;
+        levelNum: number;
+        hasChildren?: boolean;
+        hierarchy?: string;
+    }
+
+    interface PivotSchemaRowAxis {
+        tuples: PivotTupleModel[];
+    }
+
+    interface PivotSchemaColumnAxis {
+        tuples: PivotTupleModel[];
+    }
+
+    interface PivotSchemaAxes {
+        rows: PivotSchemaRowAxis;
+        columns: PivotSchemaColumnAxis;
+    }
+
+    interface PivotSchema extends DataSourceSchema{
+        axes?: any;
+        catalogs?: any;
+        cubes?: any;
+        data?: any;
+        dimensions?: any;
+        hierarchies?: any;
+        levels?: any;
+        measures?: any;
+    }
+
+    class PivotDataSource extends DataSource {
+        axes(): PivotSchemaAxes;
+        constructor(options?: PivotDataSourceOptions);
+        init(options?: PivotDataSourceOptions): void;
+        catalog(val: string): void;
+        columns(val: string[]): string[];
+        cube(val: string): void;
+        discover(options: PivotDiscoverRequestOptions): JQueryPromise<any>;
+        measures(val: string[]): string[];
+        measuresAxis(): string;
+        rows(val: string[]): string[];
+        schemaCatalogs(): JQueryPromise<any>;
+        schemaCubes(): JQueryPromise<any>;
+        schemaDimensions(): JQueryPromise<any>;
+        schemaHierarchies(): JQueryPromise<any>;
+        schemaLevels(): JQueryPromise<any>;
+        schemaMeasures(): JQueryPromise<any>;
     }
 
     interface DataSourceTransport {
@@ -693,6 +902,7 @@ declare module kendo.data {
     class ObservableArray extends Observable {
         constructor(array?: any[]);
         init(array?: any[]): void;
+        [index: number]: any;
         length: number;
         join(separator: string): string;
         parent(): ObservableObject;
@@ -730,7 +940,8 @@ declare module kendo.data {
         options: DataSourceOptions;
         add(model: Object): kendo.data.Model;
         add(model: kendo.data.Model): kendo.data.Model;
-        aggregate(val?: any): any;
+        aggregate(val: any): void;
+        aggregate(): any;
         aggregates(): any;
         at(index: number): kendo.data.ObservableObject;
         cancelChanges(model?: kendo.data.Model): void;
@@ -749,6 +960,10 @@ declare module kendo.data {
         indexOf(value: kendo.data.ObservableObject): number;
         insert(index: number, model: kendo.data.Model): kendo.data.Model;
         insert(index: number, model: Object): kendo.data.Model;
+        online(value: boolean): void;
+        online(): boolean;
+        offlineData(data: any[]): void;
+        offlineData(): any[];
         page(): number;
         page(page: number): void;
         pageSize(): number;
@@ -876,6 +1091,7 @@ declare module kendo.data {
     interface DataSourceTransportReadOptionsData {
         sort?: DataSourceSortItem[];
         filter?: DataSourceFilters;
+        group?: DataSourceGroupItem[];
         take?: number;
         skip?: number;
     }
@@ -899,6 +1115,7 @@ declare module kendo.data {
         data?: any;
         filter?: any;
         group?: DataSourceGroupItem[];
+        offlineStorage?: any;
         page?: number;
         pageSize?: number;
         schema?: DataSourceSchema;
@@ -978,6 +1195,8 @@ declare module kendo.ui {
         element: JQuery;
         setOptions(options: Object): void;
         resize(force?: boolean): void;
+        options: Object;
+        events: string[];
     }
 
     function plugin(widget: typeof kendo.ui.Widget, register?: typeof kendo.ui, prefix?: String): void;
@@ -992,7 +1211,7 @@ declare module kendo.ui {
         options: DraggableOptions;
     }
 
-    interface DraggableEvent extends JQueryEventObject {
+    interface DraggableEvent {
         sender?: Draggable;
     }
 
@@ -1010,7 +1229,7 @@ declare module kendo.ui {
         drop?(e: DropTargetDropEvent): void;
     }
 
-    interface DropTargetEvent extends JQueryEventObject {
+    interface DropTargetEvent {
         sender?: DropTarget;
     }
 
@@ -1040,16 +1259,18 @@ declare module kendo.ui {
         drop?(e: DropTargetAreaDropEvent): void;
     }
 
-    interface DropTargetAreaEvent extends JQueryEventObject {
+    interface DropTargetAreaEvent {
         sender: DropTargetArea;
     }
 
     interface DropTargetAreaDragenterEvent extends DropTargetAreaEvent {
         draggable?: JQuery;
+        dropTarget?: JQuery;
     }
 
     interface DropTargetAreaDragleaveEvent extends DropTargetAreaEvent {
         draggable?: JQuery;
+        dropTarget?: JQuery;
     }
 
     interface DropTargetAreaDropEvent extends DropTargetAreaEvent {
@@ -1059,10 +1280,13 @@ declare module kendo.ui {
 
     interface DraggableOptions {
         axis?: string;
+        container?: JQuery;
         cursorOffset?: any;
         distance?: number;
+        filter?: string;
         group?: string;
         hint?: Function;
+        ignore?: string;
         drag?(e: DraggableEvent): void;
         dragcancel?(e: DraggableEvent): void;
         dragend?(e: DraggableEvent): void;
@@ -1095,6 +1319,8 @@ declare module kendo.mobile {
         scroller(): kendo.mobile.ui.Scroller;
         showLoading(): void;
         view(): kendo.mobile.ui.View;
+        router: kendo.Router;
+        pane: kendo.mobile.ui.Pane;
     }
 
     interface ApplicationOptions {
@@ -1157,7 +1383,6 @@ declare module kendo {
     interface ColorOptions {
         name?: string;
     }
-
     interface ColorEvent {
         sender: Color;
         isDefaultPrevented(): boolean;
@@ -1238,7 +1463,6 @@ declare module kendo.mobile.ui {
         */
         open?(e: ActionSheetOpenEvent): void;
     }
-
     interface ActionSheetEvent {
         sender: ActionSheet;
         isDefaultPrevented(): boolean;
@@ -1281,7 +1505,6 @@ declare module kendo.mobile.ui {
         */
         click?(e: BackButtonClickEvent): void;
     }
-
     interface BackButtonEvent {
         sender: BackButton;
         isDefaultPrevented(): boolean;
@@ -1359,7 +1582,6 @@ declare module kendo.mobile.ui {
         */
         click?(e: ButtonClickEvent): void;
     }
-
     interface ButtonEvent {
         sender: Button;
         isDefaultPrevented(): boolean;
@@ -1432,6 +1654,12 @@ declare module kendo.mobile.ui {
         */
         destroy(): void;
         /**
+        Enables or disables the widget.
+        @method
+        @param enable - A boolean flag that indicates whether the widget should be enabled or disabled.
+        */
+        enable(enable: boolean): void;
+        /**
         Select a Button.
         @method
         @param li - LI element or index of the Button.
@@ -1448,6 +1676,11 @@ declare module kendo.mobile.ui {
     interface ButtonGroupOptions {
         name?: string;
         /**
+        Defines if the widget is initially enabled or disabled.
+        @member {boolean}
+        */
+        enable?: boolean;
+        /**
         Defines the initially selected Button (zero based index).
         @member {number}
         */
@@ -1463,7 +1696,6 @@ However, if the widget is placed in a scrollable view, the user may accidentally
         */
         select?(e: ButtonGroupSelectEvent): void;
     }
-
     interface ButtonGroupEvent {
         sender: ButtonGroup;
         isDefaultPrevented(): boolean;
@@ -1501,7 +1733,6 @@ However, if the widget is placed in a scrollable view, the user may accidentally
         */
         click?(e: DetailButtonClickEvent): void;
     }
-
     interface DetailButtonEvent {
         sender: DetailButton;
         isDefaultPrevented(): boolean;
@@ -1565,6 +1796,12 @@ However, if the widget is placed in a scrollable view, the user may accidentally
         */
         swipeToOpen?: boolean;
         /**
+        A list of the view ids on which the drawer will appear when the view is swiped. If omitted, the swipe gesture will work on all views.
+The option has effect only if swipeToOpen is set to true.
+        @member {any}
+        */
+        swipeToOpenViews?: any;
+        /**
         The text to display in the Navbar title (if present).
         @member {string}
         */
@@ -1574,6 +1811,10 @@ However, if the widget is placed in a scrollable view, the user may accidentally
         @member {any}
         */
         views?: any;
+        /**
+        Fired after the mobile Drawer has been hidden.
+        */
+        afterHide?(e: DrawerAfterHideEvent): void;
         /**
         Fires before the mobile Drawer is revealed. The event can be prevented by calling the preventDefault method of the event parameter.
         */
@@ -1591,11 +1832,13 @@ However, if the widget is placed in a scrollable view, the user may accidentally
         */
         show?(e: DrawerShowEvent): void;
     }
-
     interface DrawerEvent {
         sender: Drawer;
         isDefaultPrevented(): boolean;
         preventDefault: Function;
+    }
+
+    interface DrawerAfterHideEvent extends DrawerEvent {
     }
 
     interface DrawerHideEvent extends DrawerEvent {
@@ -1644,7 +1887,6 @@ on all platforms.
         */
         show?(e: LayoutShowEvent): void;
     }
-
     interface LayoutEvent {
         sender: Layout;
         isDefaultPrevented(): boolean;
@@ -1757,7 +1999,7 @@ on all platforms.
         */
         placeholder?: string;
         /**
-        Indicates whether filtering should be performed on every key up event or when the user press the Search button of the device keyboard.
+        Indicates whether filtering should be performed on every key up event or when the focus is moved out of the filter input.
         @member {boolean}
         */
         autoFilter?: boolean;
@@ -1870,7 +2112,6 @@ Previously loaded pages in the DataSource are also discarded.
         */
         itemChange?(e: ListViewEvent): void;
     }
-
     interface ListViewEvent {
         sender: ListView;
         isDefaultPrevented(): boolean;
@@ -1925,7 +2166,6 @@ Note: The dataItem must be from a non-primitive type (Object).
     interface LoaderOptions {
         name?: string;
     }
-
     interface LoaderEvent {
         sender: Loader;
         isDefaultPrevented(): boolean;
@@ -1977,6 +2217,10 @@ Note: The dataItem must be from a non-primitive type (Object).
         */
         width?: number;
         /**
+        Fires before the ModalView is shown. calling preventDefault on the event argument will cancel the open.
+        */
+        beforeOpen?(e: ModalViewBeforeOpenEvent): void;
+        /**
         Fired when the mobile ModalView is closed by the user.
         */
         close?(e: ModalViewCloseEvent): void;
@@ -1989,11 +2233,18 @@ Note: The dataItem must be from a non-primitive type (Object).
         */
         open?(e: ModalViewOpenEvent): void;
     }
-
     interface ModalViewEvent {
         sender: ModalView;
         isDefaultPrevented(): boolean;
         preventDefault: Function;
+    }
+
+    interface ModalViewBeforeOpenEvent extends ModalViewEvent {
+        /**
+        The invocation target of the ModalView.
+        @member {JQuery}
+        */
+        target?: JQuery;
     }
 
     interface ModalViewCloseEvent extends ModalViewEvent {
@@ -2035,7 +2286,6 @@ Note: The dataItem must be from a non-primitive type (Object).
     interface NavBarOptions {
         name?: string;
     }
-
     interface NavBarEvent {
         sender: NavBar;
         isDefaultPrevented(): boolean;
@@ -2134,7 +2384,6 @@ Note: The dataItem must be from a non-primitive type (Object).
         */
         viewShow?(e: PaneViewShowEvent): void;
     }
-
     interface PaneEvent {
         sender: Pane;
         isDefaultPrevented(): boolean;
@@ -2241,7 +2490,6 @@ Note: The dataItem must be from a non-primitive type (Object).
         */
         open?(e: PopOverOpenEvent): void;
     }
-
     interface PopOverEvent {
         sender: PopOver;
         isDefaultPrevented(): boolean;
@@ -2314,6 +2562,13 @@ Note: The dataItem must be from a non-primitive type (Object).
         @param dataSource - 
         */
         setDataSource(dataSource: kendo.data.DataSource): void;
+        /**
+        Works in data-bound mode only. If a parameter is passed, the widget scrolls to the given dataItem. If not, the method return currently displayed dataItem.
+        @method
+        @param dataItem - The dataItem to set.
+        @returns The currently displayed dataItem.
+        */
+        value(dataItem: any): any;
     }
 
     interface ScrollViewOptions {
@@ -2391,7 +2646,6 @@ Note: The dataItem must be from a non-primitive type (Object).
         */
         refresh?(e: ScrollViewRefreshEvent): void;
     }
-
     interface ScrollViewEvent {
         sender: ScrollView;
         isDefaultPrevented(): boolean;
@@ -2516,17 +2770,12 @@ Note: The dataItem must be from a non-primitive type (Object).
     interface ScrollerOptions {
         name?: string;
         /**
-        If set to true, the user can zoom in/out the contents of the widget using the pinch/zoom gesture.
-        @member {boolean}
-        */
-        zoom?: boolean;
-        /**
         Weather or not to allow out of bounds dragging and easing.
         @member {boolean}
         */
         elastic?: boolean;
         /**
-        The threshold below which a releasing the scroller will trigger the pull event.
+        The threshold below which releasing the scroller will trigger the pull event.
 Has effect only when the pullToRefresh option is set to true.
         @member {number}
         */
@@ -2562,6 +2811,16 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         useNative?: boolean;
         /**
+        If set to true, the scroller scroll hints will always be displayed.
+        @member {boolean}
+        */
+        visibleScrollHints?: boolean;
+        /**
+        If set to true, the user can zoom in/out the contents of the widget using the pinch/zoom gesture.
+        @member {boolean}
+        */
+        zoom?: boolean;
+        /**
         Fires when the pull option is set to true, and the user pulls the scrolling container beyond the specified pullThreshold.
         */
         pull?(e: ScrollerEvent): void;
@@ -2574,7 +2833,6 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         scroll?(e: ScrollerScrollEvent): void;
     }
-
     interface ScrollerEvent {
         sender: Scroller;
         isDefaultPrevented(): boolean;
@@ -2636,7 +2894,6 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         show?(e: SplitViewShowEvent): void;
     }
-
     interface SplitViewEvent {
         sender: SplitView;
         isDefaultPrevented(): boolean;
@@ -2730,7 +2987,6 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         change?(e: SwitchChangeEvent): void;
     }
-
     interface SwitchEvent {
         sender: Switch;
         isDefaultPrevented(): boolean;
@@ -2834,7 +3090,6 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         select?(e: TabStripSelectEvent): void;
     }
-
     interface TabStripEvent {
         sender: TabStrip;
         isDefaultPrevented(): boolean;
@@ -2889,6 +3144,11 @@ Native scrolling is only enabled on platforms that support it: iOS > 4, Android 
         */
         reload?: boolean;
         /**
+        Configuration options to be passed to the scroller instance instantiated by the view. For more details, check the scroller configuration options.
+        @member {any}
+        */
+        scroller?: any;
+        /**
         If set to true, the view will stretch its child contents to occupy the entire view, while disabling kinetic scrolling.
 Useful if the view contains an image or a map.
         @member {boolean}
@@ -2934,8 +3194,15 @@ Native scrolling is only enabled on platforms that support it: iOS > 5+, Android
         Fires when the mobile View becomes visible.
         */
         show?(e: ViewShowEvent): void;
+        /**
+        Fires when the mobile view transition starts.
+        */
+        transitionStart?(e: ViewTransitionStartEvent): void;
+        /**
+        Fires after the mobile view transition container has its k-fx-end class set. Setting CSS properties to the view at the event handler will animate them.
+        */
+        transitionEnd?(e: ViewTransitionEndEvent): void;
     }
-
     interface ViewEvent {
         sender: View;
         isDefaultPrevented(): boolean;
@@ -2988,6 +3255,22 @@ Native scrolling is only enabled on platforms that support it: iOS > 5+, Android
         @member {kendo.mobile.ui.View}
         */
         view?: kendo.mobile.ui.View;
+    }
+
+    interface ViewTransitionStartEvent extends ViewEvent {
+        /**
+        The transition type. Can be either "show" or "hide"
+        @member {string}
+        */
+        type?: string;
+    }
+
+    interface ViewTransitionEndEvent extends ViewEvent {
+        /**
+        The transition type. Can be either "show" or "hide"
+        @member {string}
+        */
+        type?: string;
     }
 
 
@@ -3107,7 +3390,6 @@ Notice: After the last finger is moved, the dragend event is fired.
         */
         gestureend?(e: TouchGestureendEvent): void;
     }
-
     interface TouchEvent {
         sender: Touch;
         isDefaultPrevented(): boolean;
@@ -3288,90 +3570,10 @@ Notice: After the last finger is moved, the dragend event is fired.
     }
 
 
-    class Validator extends kendo.ui.Widget {
-        static fn: Validator;
-        static extend(proto: Object): Validator;
-
-        element: JQuery;
-        wrapper: JQuery;
-        constructor(element: Element, options?: ValidatorOptions);
-        options: ValidatorOptions;
-        /**
-        Get the error messages if any.
-        @method
-        @returns Messages for the failed validation rules.
-        */
-        errors(): any;
-        /**
-        Hides the validation messages.
-        @method
-        */
-        hideMessages(): void;
-        /**
-        Validates the input element(s) against the declared validation rules.
-        @method
-        @returns true if all validation rules passed successfully.Note that if a HTML form element is set as validation container, the form submits will be automatically prevented if validation fails.
-        */
-        validate(): boolean;
-        /**
-        Validates the input element against the declared validation rules.
-        @method
-        @param input - Input element to be validated.
-        @returns true if all validation rules passed successfully.
-        */
-        validateInput(input: Element): boolean;
-        /**
-        Validates the input element against the declared validation rules.
-        @method
-        @param input - Input element to be validated.
-        @returns true if all validation rules passed successfully.
-        */
-        validateInput(input: JQuery): boolean;
-    }
-
-    interface ValidatorOptions {
-        name?: string;
-        /**
-        The template which renders the validation message.
-        @member {string}
-        */
-        errorTemplate?: string;
-        /**
-        Set of messages (either strings or functions) which will be shown when given validation rule fails.
-By setting already existing key the appropriate built-in message will be overridden.
-        @member {any}
-        */
-        messages?: any;
-        /**
-        Set of custom validation rules. Those rules will extend the built-in ones.
-        @member {any}
-        */
-        rules?: any;
-        /**
-        Determines if validation will be triggered when element loses focus. Default value is true.
-        @member {boolean}
-        */
-        validateOnBlur?: boolean;
-        /**
-        Fired when validation completes.The event handler function context (available via the this keyword) will be set to the data source instance.
-        */
-        validate?(e: ValidatorValidateEvent): void;
-    }
-
-    interface ValidatorEvent {
-        sender: Validator;
-        isDefaultPrevented(): boolean;
-        preventDefault: Function;
-    }
-
-    interface ValidatorValidateEvent extends ValidatorEvent {
-    }
-
-
 }
 
 interface HTMLElement {
-    kendoBindingTarget: kendo.data.Binding;
+    kendoBindingTarget: kendo.data.BindingTarget;
 }
 
 interface JQueryXHR {
@@ -3475,9 +3677,5 @@ interface JQuery {
     kendoTouch(): JQuery;
     kendoTouch(options: kendo.ui.TouchOptions): JQuery;
     data(key: "kendoTouch") : kendo.ui.Touch;
-
-    kendoValidator(): JQuery;
-    kendoValidator(options: kendo.ui.ValidatorOptions): JQuery;
-    data(key: "kendoValidator") : kendo.ui.Validator;
 
 }
