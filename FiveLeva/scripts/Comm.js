@@ -98,7 +98,8 @@ var Comm={
         }*/
         if (options.data){
             for (key in options.data){
-                
+               
+                if (typeof options.data[key] !=='function' && typeof options.data[key] !=='object')
                     data[key]=options.data[key];
                 
             }
@@ -112,10 +113,10 @@ var Comm={
         }else{
             d = data;
         }
-        for (k in d){
-            Log.i(k+" is "+d[k]);
-        }
+        
         if (!Comm._checkIfRegistered(data, options.skipPassword))return;
+        Log.i("Continuiing with ajax");
+        Log.i(d);
         $.ajax({
                 url: Comm.url+options.uri, 
                 //dataType: options.dataType?options.dataType:"json", 

@@ -120,5 +120,29 @@ var Business = {
                 alert("ERROR!");
             }
         });
+    }, editDiscount:function(evt){
+        var id =evt.view.params.id;
+        Log.i("Edit discount");
+         Model.setForm({
+            submit: function(){
+                function success(result){
+                   app.navigate("views/userDiscount.html?id=" + result.id);
+                }
+                Comm.post({
+                    uri: id?"addDiscountApp":"editDiscountApp",
+                    data: Model.form.object,
+                    success: success
+                });
+            },
+            cancel: function(){
+                app.navigate("#home");
+            },
+            name: "",
+            storeName:"",
+            oldPrice:"",
+            newPrice:"",
+            photo: "",
+            discountId: id
+        });
     }
 };
