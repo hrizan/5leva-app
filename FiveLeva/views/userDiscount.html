@@ -15,13 +15,20 @@
             <li><span style="font-size: .8em">RRP: </span><span class="old-price" data-bind="text: userDiscount.oldPrice"></span></li>
         </ul>
     </div>
-    <div style="display: inline-block; float: right;">
-        
-    </div>
+    <div id="user-discount-map" style="width: 100%; height: 100px" onclick="Business.seeWhereIsDiscount"></div>
     <hr>
     <div class="center-text">
         <a data-role="button" data-click="Business.requestPromotion">I'm gonna buy this!</a>
         <br>
         <a data-role="button" data-click="Business.editPromotion">Edit</a>
     </div>
+</div>
+
+<div id="user-discount-big-map"
+    data-role="view"
+    data-layout="back"
+    data-title="Map"
+    data-show="Business.userDiscountBigMap">
+    <div id="user-discount-big-map" style="width: 100%; height: 100%"></div>
+    
 </div>
