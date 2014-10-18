@@ -98,6 +98,8 @@ var Business = {
             },
             success: function(result){
                 console.log(result);
+                $("#store-discount-image").css("background-image", "url('" +result.url+ "')");
+                Model.setStoreDiscount(result);
             },
             error: function(){
                 alert("ERROR!");
@@ -128,5 +130,29 @@ var Business = {
     },
     userDiscountBigMap: function(){
         Map.udBigMapInit(42.7, 23.4);
+    }, editDiscount:function(evt){
+        var id =evt.view.params.id;
+        Log.i("Edit discount");
+         Model.setForm({
+            submit: function(){
+                function success(result){
+                   app.navigate("views/userDiscount.html?id=" + result.id);
+                }
+                Comm.post({
+                    uri: id?"addDiscountApp":"editDiscountApp",
+                    data: Model.form.object,
+                    success: success
+                });
+            },
+            cancel: function(){
+                app.navigate("#home");
+            },
+            name: "",
+            storeName:"",
+            oldPrice:"",
+            newPrice:"",
+            photo: "",
+            discountId: id
+        });
     }
 };

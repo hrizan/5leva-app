@@ -13,7 +13,7 @@ var Map = {
             zoomControl:false,
         };
         Map.userDiscountMiniMap = new google.maps.Map(document.getElementById("user-discount-map"), mapOptions);
-        google.maps.event.addListener(Map.userDiscountMiniMap, "click", Business.seeWhereIsDiscount());
+       
     },
     dropPinAtMiniMap: function(lat, lng){
         var location = new google.maps.LatLng(lat, lng);
