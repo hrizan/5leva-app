@@ -31,17 +31,17 @@ var Business = {
                 os: "IOS"  
             },
             skipPassword: true,
-            onNoInternet: function(){navigator.splashscreen.hide();app.navigate("#templates/about.html");},
+            onNoInternet: function(){navigator.splashscreen.hide();/*app.navigate("#templates/about.html");*/},
             success: function(result){
                
                 Business._password = result.password;
                 Log.i("Creating user with password "+Business._password);
                 Storage.storePassword(result.password, Business.loginUser);
-                
+                 Push.register();
             },
             error: function() {
                 navigator.splashscreen.hide();
-                app.navigate("#templates/about.html"); 
+              //  app.navigate("#templates/about.html"); 
             }
         });
     },
@@ -55,9 +55,22 @@ var Business = {
                 Business._createUser();
             } else {
                 Business._password = password;
+                Push.register();
               //  Business.loginUser();
                // Business._sendPushToken();
             }
         });
-    },
+    },_sendPushToken: function(token){
+        Comm.post({
+            uri: "updateToken",
+            data:{
+                token: token  
+            },
+            success: function(result){
+                Log.i("Token updated to "+token);
+            }
+        });
+    }, openViewOnNotification: function(data){
+        
+    }
 };

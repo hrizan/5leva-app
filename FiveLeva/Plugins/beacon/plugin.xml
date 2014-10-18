@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="eu.fiveleva.beacon"
+    version="1.0.0">
+    <name>BeaconPlugin</name>
+    <js-module src="www/beacon.js" name="beacon">
+        <clobbers target="navigator.beacon" />
+    </js-module>
+     
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Beacon">
+                <param name="ios-package" value="Beacon" />
+            </feature>
+        </config-file>
+           <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>This app would like to scan for iBeacons even when in the background.</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>This app would like to scan for iBeacons while it is in use.</string>
+        </config-file>
+        
+        <header-file src="src/ios/Beacon.h" />
+        <source-file src="src/ios/Beacon.m" />
+ 
+        <framework src="CoreLocation.framework" weak="true" />
+        
+    </platform>
+</plugin>

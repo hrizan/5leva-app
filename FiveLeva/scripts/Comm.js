@@ -10,8 +10,8 @@ var Comm={
             Comm._hideLoading();
             
         }
-        return v;
-    },
+        return v; 
+    }, 
     init: function(options){
         Comm.url = options.url;
         if (typeof options.isSimulator == 'function'){
@@ -119,17 +119,17 @@ var Comm={
         $.ajax({
                 url: Comm.url+options.uri, 
                 //dataType: options.dataType?options.dataType:"json", 
-                timeout: 2000, //options.timeout?options.timeout:1500,
+                timeout: 5000, //options.timeout?options.timeout:1500,
                 data: d, 
                 type:options.type?options.type:"get", 
                 //contentType: 'text/html; charset=UTF-8',
                 success: success,
-                error: function(){options.error();Comm._hideLoading();}
+                error: function(){options.error();Comm._hideLoading();} 
             });
     }, 
     post: function(options){
-        options.type="post"; 
-        return Comm.get(options); 
+        options.type="post";   
+        return Comm.get(options);  
     }
 };
 document.addEventListener("online", function(){

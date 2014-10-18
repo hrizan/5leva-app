@@ -9,16 +9,18 @@
     <script src="cordova.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
     <script src="kendo/js/kendo.mobile.min.js"></script>
-
+  
     <!--script src="scripts/app.js"></script-->
     <script src="scripts/Comm.js"></script>
 	<script src="scripts/Business.js"></script>
-        <script src="scripts/Report.js"></script>
+    <script src="scripts/Report.js"></script>
 	<script src="scripts/Storage.js"></script>
     <script src="scripts/Log.js"></script>
+    <script src="scripts/Beacon.js"></script>
+     <script src="scripts/Push.js"></script>
 </head>
 <body>
- 
+  
   <div data-role="layout" data-id="main">
     <div data-role="header">
       <div data-role="navbar">
@@ -26,13 +28,15 @@
         <a data-role="button" href="#appDrawer" data-rel="drawer" data-align="left" data-icon="drawer-button"></a>
       </div>
     </div>
-
-    <!-- application views will be rendered here -->
-    
   </div>
-<div data-role="view">
-    app
+
+    <div id="home" data-role="view" data-layout="main" data-title="5 leva">
+        <input type="text" placeholder="search"/>
+        <ul id="remoteListView" data-source="dataSource" data-role="listview" data-template="template" data-endless-scroll="true"></ul>
     </div>
+    <script id="template" type="text/x-kendo-template">
+    #: id #
+</script>
   <!-- application drawer and contents -->
   <div data-role="drawer" id="appDrawer" style="width: 270px" data-title="Navigation">
     <div data-role="header">
@@ -53,12 +57,13 @@
     </ul>
   </div>       
 <script>
+    var url = "http://192.168.199.14:8080/fiveleva/";
     window.app = new kendo.mobile.Application($(document.body), {
         	platform: "ios7",
         layout : "home"});
          document.addEventListener("deviceready", function(){
              	Comm.init({
-                    url: "http://localhost:8080/fiveleva/",
+                    url: url,
                     dataCallback: function(){
                         return {password: Business._password, appVersion: 1};
                 	},
@@ -76,22 +81,22 @@
                     //type: "requestBody"
                 });
                 Storage.init({complete: function(){Business.login();}});
-             /* Beacon.init({onInit: function(){},
+              Beacon.init({onInit: function(){},
                 error: function(err){}, onFound: function(storeNumber){
                     UI.showAlert("Found store number "+storeNumber);
             }});
                 Push.init({
                     onToken: function(token){
                         Log.i("On token" +token);
-                        //Business._sendPushToken();
+                        Business._sendPushToken(token);
                         Log.i("Login is complete and token is sent");
                     },
                     onBackground: function(message, data) {
                         Business.openViewOnNotification(data);
                         for (key in data) {
                             Log.i(key + ": " + data[key]);
-                        }
-                        Log.i("Got message from background " + message);
+                          }
+                        Log.i("Got message from background " + message); 
                     },
                     onForeground: function(message, data) {
                         Business.openViewOnNotification(data);
@@ -103,9 +108,22 @@
                     onError: function(message) {
                         Log.i("Got PUSH error " + message);
                     }
-                });*/
-            },false);
-                
-</script>
+                });
+            },false); 
+         var dataSource = new kendo.data.DataSource({
+  type: "json",
+  transport: {
+    read: {
+        url: url+"endless"
+    }
+  },
+  schema: {
+      total: function(){return 1000;} // schema total is required for the server paging to work as expected
+  },
+  serverPaging: true,
+  serverSorting: true,
+  pageSize: 60
+});       
+</script> 
 </body>
 </html>
