@@ -181,7 +181,7 @@
                 <li>
                     <label>
                         When does it expire?
-                        <input class="right-align" type="date" data-bind="value: object.expirationDate" style="width: 20%"/>
+                        <input class="right-align" type="text" data-bind="value: object.expirationDate"/>
                     </label>
                 </li>
                 <li>
@@ -224,14 +224,9 @@
         </div>
         <!-- application drawer and contents -->
         <div data-role="drawer" id="appDrawer" style="width: 220px" data-title="Navigation" data-swipe-to-open="false">
-            <div data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                </div>
-            </div>
             <ul data-role="listview">
                 <li>
-                    <a href="views/home.html">Home</a>
+                    <a href="#home">Home</a>
                 </li>
                 <li>
                     <a href="views/settings.html">Settings</a>
@@ -242,7 +237,7 @@
             </ul>
         </div>
         <script>
-            var url = "http://192.168.100.6:8080/fiveleva/";
+            var url = "http://192.168.197.101:8080/fiveleva/";
             window.app = new kendo.mobile.Application($(document.body), {
                                                           platform: "ios7",
                                                           layout : "home"
@@ -276,8 +271,10 @@
                                 onInit: function() {
                                 },
                                 error: function(err) {
-                                }, onFound: function(storeNumber) {
+                                },
+                                onFound: function(storeNumber) {
                                     UI.showAlert("Found store number " + storeNumber);
+                                    app.navigate("views/storePromotions.html?beaconId="+storeNumber);
                                 }
                             });
                 Push.init({
