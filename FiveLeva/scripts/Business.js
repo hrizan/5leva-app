@@ -230,6 +230,8 @@ var Business = {
                       uri: "account",
                       success: function(result) {
                           console.log(result);
+                          $("#sum").html("You have " + result.sum/100 + " lv.");
+                          $("#income").html("You will receive " + result.notConfirmedSum/100 + " lv.");
                           var accountDataSource = new kendo.data.DataSource({
                                                                                 data: result.results
                                                                             });
