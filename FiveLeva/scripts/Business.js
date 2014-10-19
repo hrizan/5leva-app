@@ -118,6 +118,7 @@ var Business = {
                           console.log(result);
                           $("#user-discount-image").css("background-image", "url('" + result.url + "')");
                           Model.setUserDiscount(result);
+                          $("#want-button").attr("onclick", "Business.requestPromotion("+result.id+")");
                           Map.dropPinAtMiniMap(42.6954328, 23.3239465)
                       },
                       error: function() {
@@ -202,22 +203,120 @@ var Business = {
                          img: "dImg"
                      });
     },
-    showStorePromotions: function() {
+    showStorePromotions: function(evt) {
         var id = evt.view.params.beaconId;
+        Log.i("in showStorePromotions");
+        Log.i(id);
+        
         Comm.post({
                       uri: "beacon",
                       data: {
-                                beaconId: id
-                      },
+                beaconId: id
+            },
                       success: function(result) {
+                          Log.i(result);
                           var storePromotionsDataSource = new kendo.data.DataSource({
                                                                                         data: result.dtos
                                                                                     });
-                          $("#store-discounts-list").data("kendoMobileListView").setDataSource(storePromotionsDataSource);
+                          $("#store-promotions-list").data("kendoMobileListView").setDataSource(storePromotionsDataSource);
                       },
-                      error: function(){
+                      error: function() {
                           alert("ERROR HAPPENED!");
                       }
                   });
+    },
+    account: function() {
+        Comm.post({
+                      uri: "account",
+                      success: function(result) {
+                          console.log(result);
+                          var accountDataSource = new kendo.data.DataSource({
+                                                                                data: result.results
+                                                                            });
+                          $("#account-list").data("kendoMobileListView").setDataSource(accountDataSource);
+                          
+                      }
+                  });
+    },
+    requestPromotion: function(id){
+        Comm.post({
+            uri: "willUseIt",
+            data: {
+                id: id
+            },
+            success: function(result){
+                alert("You have requested this discount!");
+            },
+            error: function(){
+                alert("ERROR HAPPENED!");
+            }
+        });
+    },
+    showStoreDiscountHistory: function(evt) {
+        var id = evt.view.params.id;
+        Comm.post({
+                      uri: "showStoreDiscountMobile",
+                      data: {
+                id: id
+            },
+                      success: function(result) {
+                          console.log(result);
+                          $("#store-discount-image").css("background-image", "url('" + result.url + "')");
+                          Model.setStoreDiscount(result);
+                      },
+                      error: function() {
+                          alert("ERROR!");
+                      }
+                  });        
+    },
+    showUserDiscountHistory: function(evt) {
+        var id = evt.view.params.id;
+        var resultId = evt.view.params.resultId;
+        var showButtons = evt.view.params.showButtons;
+        Map.udhMiniMapInit();
+        Comm.post({
+                      uri: "showUserDiscountMobile",
+                      data: {
+                id: id
+            },
+                      success: function(result) {
+                          console.log(result);
+                          $("#user-discount-history-image").css("background-image", "url('" + result.url + "')");
+                          Model.setUserDiscount(result);
+                          if(showButtons){
+                              $("#bought-button").attr("onclick", "Business.changeResult("+resultId+", "+result.id+", 1)");
+                              $("#decline-button").attr("onclick", "Business.changeResult("+resultId+", "+result.id+", 2)");
+                          } else {
+                               $("#bought-button").hide();
+                              $("#decline-button").hide;
+                          }
+                          
+                          Map.dropPinAtMiniHMap(42.6954328, 23.3239465)
+                      },
+                      error: function() {
+                          alert("ERROR!");
+                      }
+                  });
+    },
+    changeResult: function(resultId, discountId, action){
+        Comm.post({
+            uri: "changeResult",
+            data: {
+                resultId: resultId,
+                discountId: discountId,
+                action: action
+            },
+            success: function(result){
+                if (action == 1){
+                   alert("You said you bought this Promo!"); 
+                } else {
+                    alert("You declined this Promo!");
+                }
+            },
+            error: function(){
+                alert("ERROR HAPPENED!");
+            }
+            
+        });
     }
 };
