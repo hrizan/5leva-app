@@ -1,0 +1,27 @@
+<div id="account"
+     data-role="view"
+     data-layout="main-2"
+     data-title="Account"
+     data-show="Business.account">
+
+    <ul id="account-list" data-role="listview" data-template="account-tmpl"></ul>
+
+</div>
+
+<script id="account-tmpl" type="text/x-kendo-template">
+    #var d;
+    
+    #
+    #if (type) {#
+        #d = "userDiscountHistory";#
+    #} else {#
+        #d = "storeDiscountHistory";#
+    #}
+    
+    #            
+    <a href="views/#=d#.html?id=#=id#&resultId=#=resultId#&showButtons=#=showButtons#">
+        <div style="background-image: url(http://192.168.197.101:8080/fiveleva/resources/pictures/#:url#_s.jpeg);" class="discount-list-pic"></div>
+        <label>#:name#<p style="margin: 0; color: green">#:status#</p>
+            <input type="text" class="new-price right-align" value="#:sum/100# lv." data-bind="visible: #:sum#" readonly/></label>
+    </a>
+</script>

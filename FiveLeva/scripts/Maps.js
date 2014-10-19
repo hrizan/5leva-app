@@ -2,6 +2,7 @@ var Map = {
     userDiscountMiniMap: "",
     userDiscountBigMap: "",
     addDiscountMap: "",
+    userDiscountMiniHMap: "",
     udMiniMapInit: function() {
         var mapOptions = {
             center: new google.maps.LatLng(42.6954322, 23.3239467),
@@ -73,6 +74,30 @@ var Map = {
             Model.form.object.set("lat", event.latLng.lat());
             Model.form.object.set("lng", event.latLng.lng());
         });
+    },
+    
+    udhMiniMapInit: function() {
+        var mapOptions = {
+            center: new google.maps.LatLng(42.6954322, 23.3239467),
+            zoom: 15,
+            streetViewControl: false,
+            mapTypeControl: false,
+            draggable: false,
+            scrollwheel: false,
+            panControl: false,
+            zoomControl:false,
+        };
+        Map.userDiscountMiniHMap = new google.maps.Map(document.getElementById("user-discount-history-map"), mapOptions);
+    },
+    dropPinAtMiniHMap: function(lat, lng) {
+        var location = new google.maps.LatLng(lat, lng);
+        var promoPin = new google.maps.Marker({
+                                                  position: location,
+                                                  map: Map.userDiscountMiniHMap,
+                                                  draggable : false,
+                                                  animation : google.maps.Animation.DROP
+                                              });
+        Map.userDiscountMiniHMap.setCenter(location);
     }
     
 }

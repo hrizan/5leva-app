@@ -17,6 +17,7 @@ var Beacon={
                   options.error(o.error);
               }
               if(o && o.found){
+                  Log.i("DUDUUDDU")
                   options.onFound(o.found);
               }
               if (o && o.scanning){

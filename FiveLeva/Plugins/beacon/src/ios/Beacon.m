@@ -93,6 +93,8 @@
 
     NSNumber* storeNumber = [userInfo objectForKey:@"storeNumber"];
     NSLog(@"Got store number %i", storeNumber.intValue);
+ NSDictionary * dic = [[NSDictionary alloc]initWithObjectsAndKeys: storeNumber, @"found", nil];
+    [self pluginRespondwithData:dic toCallback:self.callback];
     
 }
 - (void) didFinishLaunchingWithOptions:(NSNotification*)notification

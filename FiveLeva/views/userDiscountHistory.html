@@ -1,12 +1,12 @@
 <div id="userDiscount"
     data-role="view"
     data-layout="back"
-    data-title="Promo"
+    data-title="History Promo"
     data-model="Model.userDiscount"
-    data-show="Business.showUserDiscount">
+    data-show="Business.showUserDiscountHistory">
     
-    <div id="user-discount-image" class="discount-image"></div>
-    <div id="user-discount-name" class="discount-name">
+    <div id="user-discount-history-image" class="discount-image"></div>
+    <div id="user-discount-history-name" class="discount-name">
         <span data-bind="text: u.name"></span>&nbsp;in&nbsp;<span data-bind="text: u.storeName"></span>
     </div>
     <div style="display: inline-block;">
@@ -15,10 +15,10 @@
             <li><span style="font-size: .8em">RRP: </span><span class="old-price" data-bind="text: u.oldPrice"></span></li>
         </ul>
     </div>
-    <div id="user-discount-map" style="width: 100%; height: 100px"></div>
+    <div id="user-discount-history-map" style="width: 100%; height: 100px"></div>
     <hr>
     <div class="center-text">
-        <a data-role="button" id="want-button">I'm gonna buy this!</a>
+        <a data-role="button" id="bought-button">I bought it!</a><a data-role="button" id="decline-button">I don't want it anymore</a>
     </div>
 </div>
 

@@ -126,6 +126,15 @@
             </div>
         </div>
         
+        <div data-role="layout" data-id="main-2">
+            <div data-role="header">
+                <div data-role="navbar">
+                    <span data-role="view-title"></span>
+                    <a data-role="button" href="#appDrawer" data-rel="drawer" data-align="left" data-icon="drawer-button"></a>
+                </div>
+            </div>
+        </div>
+        
         <div id="home" data-role="view" data-layout="main" data-title="5 leva">
             <ul id="discounts-list" data-role="listview" data-template="template"></ul>
         </div>
@@ -181,7 +190,7 @@
                 <li>
                     <label>
                         When does it expire?
-                        <input class="right-align" type="text" data-bind="value: object.expirationDate" style="width: 20%"/>
+                        <input class="right-align" type="text" data-bind="value: object.expirationDate"/>
                     </label>
                 </li>
                 <li>
@@ -224,21 +233,14 @@
         </div>
         <!-- application drawer and contents -->
         <div data-role="drawer" id="appDrawer" style="width: 220px" data-title="Navigation" data-swipe-to-open="false">
-            <div data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                </div>
-            </div>
             <ul data-role="listview">
                 <li>
-                    <a href="views/home.html">Home</a>
+                    <a href="#home">Home</a>
                 </li>
                 <li>
-                    <a href="views/settings.html">Settings</a>
+                    <a href="views/account.html">Account</a>
                 </li>
-                <li>
-                    <a href="views/contacts.html">Contacts</a>
-                </li>
+
             </ul>
         </div>
         <script>
@@ -276,8 +278,11 @@
                                 onInit: function() {
                                 },
                                 error: function(err) {
-                                }, onFound: function(storeNumber) {
-                                    UI.showAlert("Found store number " + storeNumber);
+                                },
+                                onFound: function(storeNumber) {
+                                    //UI.showAlert("Found store number " + storeNumber);
+                                    Log.i("IN onFound");
+                                    app.navigate("views/storePromotions.html?beaconId="+storeNumber);
                                 }
                             });
                 Push.init({
